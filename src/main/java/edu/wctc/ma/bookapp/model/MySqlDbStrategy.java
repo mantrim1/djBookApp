@@ -64,33 +64,34 @@ public class MySqlDbStrategy implements DBStrategy {
     }
     
     @Override
-    public void deleteById(String tableName, String primaryKeyFieldName, Object primaryKeyValue) throws SQLException {
+    public int deleteById(String tableName, String primaryKeyFieldName, Object primaryKeyValue) throws SQLException {
        
- 
+ int recordsAffected;
        String sqlCommand;
        Statement stmt = conn.createStatement();
         if(primaryKeyValue instanceof String){
             sqlCommand = this.deleteSqlStart + tableName + " " + this.where+
                     primaryKeyFieldName+ this.deleteSqEquals + this.singleQuote + primaryKeyValue +
                     this.singleQuote;
-            //this returns the number of records altered
-            stmt.executeUpdate(sqlCommand);
+           
+     recordsAffected = stmt.executeUpdate(sqlCommand);
             System.out.println("Delete SQL: " + sqlCommand);
         
     }else{
                        sqlCommand = this.deleteSqlStart + tableName + " " + this.where +
                    primaryKeyFieldName + this.deleteSqEquals +  primaryKeyValue; 
                        System.out.println("Delete SQL: " + sqlCommand);
-                       stmt.executeUpdate(sqlCommand);
+                       recordsAffected =  stmt.executeUpdate(sqlCommand);
                        
         }
          
         
-       
+       return recordsAffected;
     
     }
     @Override
-    public void insertRecords(String tableName, List columNames, List columnValues) throws SQLException {
+    public int insertRecords(String tableName, List columNames, List columnValues) throws SQLException {
+        int recordsAffected;
         this.psInsert = this.buildInsertStatement(conn, tableName, columNames, columnValues);
         final Iterator i = columnValues.iterator();
         int index = 0;
@@ -102,10 +103,12 @@ public class MySqlDbStrategy implements DBStrategy {
              }
         }
        
-        psInsert.executeUpdate();
+        recordsAffected =  psInsert.executeUpdate();
+        return recordsAffected;
     }
      @Override
-    public void updateRecords(String tableName, String fieldName, Object fieldValue, List colNames, List values) throws SQLException {
+    public int updateRecords(String tableName, String fieldName, Object fieldValue, List colNames, List values) throws SQLException {
+        int recordsAffected;
         this.psUpdate = this.buildUpdateStatement(conn, tableName, colNames, fieldName);
         final Iterator i = values.iterator();
         int index = 0;
@@ -118,7 +121,9 @@ public class MySqlDbStrategy implements DBStrategy {
             }
             
         }
-        psUpdate.executeUpdate();
+        psUpdate.setObject(index+1, fieldValue);
+        recordsAffected =  psUpdate.executeUpdate();
+        return recordsAffected;
     }
     private PreparedStatement buildInsertStatement(Connection conn, String tableName,
             List colNames, List colValues)throws SQLException{

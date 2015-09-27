@@ -3,8 +3,26 @@
     <head>
         <title>Start Page</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+       
     </head>
-    <body>
-        <h1>Hello World!</h1>
+    <body><div class="container">
+        <div class="jumbotron">
+        <h1>Mark Antrim - Books App</h1>
+
+        <ol>
+            <li><a href="AuthorController?action=list">View all Authors</a></li>
+            <li> <a href="/bookApp/addAuthor.jsp" >Add A New Author</a></li>
+            <li><a href="/bookApp/updateAuthor.jsp" >Update an Author</a></li>
+            <li><a href="/bookApp/deleteAuthor.jsp" style="color:red;" >Delete an Author</a></li>
+        </ol>
+        </div>
+        </div>
+        <!-- scripts -->
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     </body>
 </html>
