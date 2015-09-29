@@ -13,6 +13,7 @@ import edu.wctc.ma.bookapp.model.DBStrategy;
 import edu.wctc.ma.bookapp.model.MySqlDbStrategy;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,14 +57,38 @@ public class AuthorController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
+        String dbClassName = this.getServletContext().getInitParameter("dbStrategy");
+        String dbDriver = this.getServletContext().getInitParameter("driverClass");
+        String dbUrl = this.getServletContext().getInitParameter("booksDbUrl");
+        String dbUser = this.getServletContext().getInitParameter("booksDbLogin");
+        String dbPswd = this.getServletContext().getInitParameter("booksDbPswd");
+        String daoClassName = this.getServletContext().getInitParameter("authorDao");
+        AuthorDaoStrategy authorDao = null;
+        try{
+        Class dbStrategy = Class.forName(dbClassName);
+        DBStrategy db = (DBStrategy)dbStrategy.newInstance();
+        Class daoClass = Class.forName(daoClassName);
+                
+         Constructor constructor = daoClass.getConstructor(new Class[] {
+                        DBStrategy.class,String.class,String.class,String.class,String.class
+            });
+          if(constructor != null) { 
+                Object[] constructorArgs = new Object[] {
+                    db,dbDriver,dbUrl, dbUser, dbPswd};
+                
+                authorDao = (AuthorDaoStrategy)constructor
+                        .newInstance(constructorArgs);
+                
+            }
+        }catch(Exception e){
+                
+         }
         String destination = LIST_PAGE;
         String action = request.getParameter(ACTION_PARAM);
+        String email = this.getServletContext().getInitParameter("email");
+        System.out.println(email);
 
-        DBStrategy db = new MySqlDbStrategy();
-        AuthorDaoStrategy authorDao
-                = new AuthorDao(db, "com.mysql.jdbc.Driver",
-                        "jdbc:mysql://localhost:3306/books", "root", "admin");
+    
         AuthorService authorService = new AuthorService(authorDao);
 
         try {
