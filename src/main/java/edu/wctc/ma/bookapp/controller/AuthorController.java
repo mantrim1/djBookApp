@@ -14,6 +14,7 @@ import edu.wctc.ma.bookapp.model.MySqlDbStrategy;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class AuthorController extends HttpServlet {
  private static final String NO_PARAM_ERR_MSG = "No request parameter identified";
 
     private static final String LIST_PAGE = "/listAuthors.jsp";
+    private static final String LIST_CONTROL = "AuthorController?action=list";
     private static final String ADD_PAGE = "/addAuthor.jsp";
     private static final String DELETE_PAGE = "/deleteAuthor.jsp";
     private static final String UPDATE_PAGE = "/updateAuthor.jsp";
@@ -80,8 +82,10 @@ public class AuthorController extends HttpServlet {
                         .newInstance(constructorArgs);
                 
             }
-        }catch(Exception e){
-                
+        }catch(ClassNotFoundException | InstantiationException | IllegalAccessException
+                | NoSuchMethodException | SecurityException | IllegalArgumentException 
+                | InvocationTargetException e){
+                System.out.println(e.getMessage());
          }
         String destination = LIST_PAGE;
         String action = request.getParameter(ACTION_PARAM);
@@ -97,48 +101,43 @@ public class AuthorController extends HttpServlet {
 //            DataSource ds = (DataSource)ctx.lookup("jdbc/book");
 //            AuthorDaoStrategy authDao = new ConnPoolAuthorDao(ds, new MySqlDbStrategy());
 //            AuthorService authService = new AuthorService(authDao);
-
-           
-            if (action.equals(LIST_ACTION)) {
-                List<Author> authors = null;
-                authors = authorService.getAllAuthors();
-                System.out.println(authors.size() + " Records");
-                request.setAttribute("authors", authors);
-                request.setAttribute("count", authors.size());
-                destination = LIST_PAGE;
-
-            } else if (action.equals(ADD_ACTION)) {
-               
-              
-                
-                try{
-                this.col_affected = authorService.insertAuthor( request.getParameter(NAME_PARAM));
-                request.setAttribute("updated", col_affected + " Records Added");
-                }catch(Exception e){
-                    request.setAttribute("updated", "An error occured");
-                }
-                destination = ADD_PAGE;
-            
-            } else if (action.equals(DELETE_ACTION)) {
-               try{
-                   this.col_affected = authorService.deleteAuthor(request.getParameter(ID_PARAM));
-                   request.setAttribute("updated", col_affected + " Records Deleted");
-               }catch(Exception ex){
-                    request.setAttribute("updated", "An error occured");
-               }
-               destination = DELETE_PAGE;
-            } else if (action.equals(UPDATE_ACTION)) {
-                try{
-                    this.col_affected = authorService.updateAuthor(request.getParameter(ID_PARAM), request.getParameter(NAME_PARAM));
-                    request.setAttribute("updated", col_affected + " Records Updated");
-                }catch(Exception e){
-                    request.setAttribute("updated", "An error occured " + e.getMessage());
-                }
-                destination = UPDATE_PAGE;
-            } else {
-                // no param identified in request, must be an error
-                request.setAttribute("errMsg", NO_PARAM_ERR_MSG);
-                destination = LIST_PAGE;
+            switch (action) {
+                case LIST_ACTION:
+                    List<Author> authors = authorService.getAllAuthors();
+                    System.out.println(authors.size() + " Records");
+                    request.setAttribute("authors", authors);
+                    request.setAttribute("count", authors.size());
+                    destination = LIST_PAGE;
+                    break;
+                case ADD_ACTION:
+                    try{
+                        this.col_affected = authorService.insertAuthor( request.getParameter(NAME_PARAM));
+                        request.setAttribute("updated", col_affected + " Records Added");
+                    }catch(Exception e){
+                        request.setAttribute("updated", "An error occured");
+                    }   destination = ADD_PAGE;
+                    break;
+                case DELETE_ACTION:
+                    try{
+                        this.col_affected = authorService.deleteAuthor(request.getParameter(ID_PARAM));
+                        request.setAttribute("updated", col_affected + " Records Deleted");
+                    }catch(Exception ex){
+                        request.setAttribute("updated", "An error occured");
+               }    destination = DELETE_PAGE;
+                    break;
+                case UPDATE_ACTION:
+                    try{
+                        this.col_affected = authorService.updateAuthor(request.getParameter(ID_PARAM), request.getParameter(NAME_PARAM));
+                        request.setAttribute("updated", col_affected + " Records Updated");
+                    }catch(Exception e){
+                        request.setAttribute("updated", "An error occured " + e.getMessage());
+                }   destination = UPDATE_PAGE;
+                break;
+                default:
+                    // no param identified in request, must be an error
+                    request.setAttribute("errMsg", NO_PARAM_ERR_MSG);
+                    destination = LIST_PAGE;
+                    break;
             }
             
         } catch (Exception e) {
