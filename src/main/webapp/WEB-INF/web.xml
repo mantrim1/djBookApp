@@ -5,6 +5,14 @@
 	 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 	 version="3.1">
     <context-param>
+        <param-name>booksDbLogin</param-name>
+        <param-value>root</param-value>
+    </context-param>
+    <context-param>
+        <param-name>booksDbPswd</param-name>
+        <param-value>admin</param-value>
+    </context-param>
+    <context-param>
         <param-name>authorDao</param-name>
         <param-value>edu.wctc.ma.bookapp.model.AuthorDao</param-value>
     </context-param>
@@ -19,14 +27,6 @@
     <context-param>
         <param-name>booksDbUrl</param-name>
         <param-value>jdbc:mysql://localhost:3306/books</param-value>
-    </context-param>
-    <context-param>
-        <param_name>booksDbLogin</param_name>
-        <param_value>root</param_value>
-    </context-param>
-    <context-param>
-        <param-name>booksDbPswd</param-name>
-        <param-value>admin</param-value>
     </context-param>
     <context-param>
         <param-name>email</param-name>

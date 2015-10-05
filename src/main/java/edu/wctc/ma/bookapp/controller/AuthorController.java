@@ -22,11 +22,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -59,6 +61,22 @@ public class AuthorController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        
+        HttpSession session = request.getSession();
+       
+        ServletContext ctx = request.getServletContext();
+        int count;
+        if(null == session.getAttribute("updated")){
+            count=0;
+        }else{
+            try{
+            count=(int) session.getAttribute("updated");
+            }catch(Exception ex){
+                count=0;
+            }
+        }
+        
+        
         String dbClassName = this.getServletContext().getInitParameter("dbStrategy");
         String dbDriver = this.getServletContext().getInitParameter("driverClass");
         String dbUrl = this.getServletContext().getInitParameter("booksDbUrl");
@@ -108,30 +126,39 @@ public class AuthorController extends HttpServlet {
                     request.setAttribute("authors", authors);
                     request.setAttribute("count", authors.size());
                     destination = LIST_PAGE;
+                    
                     break;
                 case ADD_ACTION:
                     try{
                         this.col_affected = authorService.insertAuthor( request.getParameter(NAME_PARAM));
                         request.setAttribute("updated", col_affected + " Records Added");
+                                            count+=this.col_affected;
+
                     }catch(Exception e){
                         request.setAttribute("updated", "An error occured");
+                        
                     }   destination = ADD_PAGE;
+                    session.setAttribute("updated", count);
                     break;
                 case DELETE_ACTION:
                     try{
                         this.col_affected = authorService.deleteAuthor(request.getParameter(ID_PARAM));
                         request.setAttribute("updated", col_affected + " Records Deleted");
+                         count+=this.col_affected;
                     }catch(Exception ex){
                         request.setAttribute("updated", "An error occured");
                }    destination = DELETE_PAGE;
+               session.setAttribute("updated", count);
                     break;
                 case UPDATE_ACTION:
                     try{
                         this.col_affected = authorService.updateAuthor(request.getParameter(ID_PARAM), request.getParameter(NAME_PARAM));
                         request.setAttribute("updated", col_affected + " Records Updated");
+                         count+=this.col_affected;
                     }catch(Exception e){
                         request.setAttribute("updated", "An error occured " + e.getMessage());
                 }   destination = UPDATE_PAGE;
+                session.setAttribute("updated", count);
                 break;
                 default:
                     // no param identified in request, must be an error
