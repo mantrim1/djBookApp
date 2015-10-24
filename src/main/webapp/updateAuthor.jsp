@@ -15,7 +15,7 @@
         <title>Update Author</title>
     </head>
     <body>
-         <h3>Total rows affected: ${updated}</h3>
+         <h3>Total rows affected this session: ${sessionRows}</h3>
          <div id="form" class="well">
             <div class="panel panel-default">
                 <div class="panel-heading"> <h1>Update Author Information</h1></div>

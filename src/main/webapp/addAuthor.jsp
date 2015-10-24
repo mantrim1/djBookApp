@@ -15,7 +15,7 @@
         <title>Add Author</title>
     </head>
     <body>
-        <h3>Total rows affected: ${updated}</h3>
+        <h3>Total rows affected this session: ${sessionRows}</h3>
         <div id="form" class="well">
             <div class="panel panel-default">
   <div class="panel-heading"> <h1>Enter Author Information</h1></div>
@@ -30,6 +30,7 @@
         <input class="btn btn-success" type="submit" value="Add" name="submit" id="submit"/>
         </form>
       <h2>${updated}</h2>
+      <a href="AuthorController?action=nav&dest=home">Home</a>
   </div>
 </div>
              

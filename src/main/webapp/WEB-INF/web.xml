@@ -17,7 +17,7 @@
         <param-value>edu.wctc.ma.bookapp.model.AuthorDao</param-value>
     </context-param>
     <context-param>
-        <param-name>dbStrategey</param-name>
+        <param-name>dbStrategy</param-name>
         <param-value>edu.wctc.ma.bookapp.model.MySqlDbStrategy</param-value>
     </context-param>
     <context-param>
